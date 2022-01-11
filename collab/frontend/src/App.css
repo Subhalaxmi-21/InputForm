@@ -31,15 +31,15 @@
   align-content:space-around;
   /* paddi; */
   gap:10px;  
-  
-}
+   }
 .texts{
-  width:50vw; 
-}
-.close :hover{
+  width:50vw;  
+ } 
+ .close :hover{
   transform: rotate(90deg);
   animation: roll 2s infinite;
 }
+
 @keyframes roll {
   0% {
     transform: rotate(0);

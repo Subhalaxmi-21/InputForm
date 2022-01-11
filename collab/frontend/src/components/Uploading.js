@@ -1,79 +1,124 @@
-// import * as React from 'react';
-import Box from '@mui/material/Box';
+import React,{useState,useEffect} from 'react'
+import { styled } from '@mui/material/styles';
 import TextField from '@mui/material/TextField';
 import Button from '@mui/material/Button';
+import { Box } from '@mui/system';
+import '../App.css'
+import IconButton from '@mui/material/IconButton';
+import { Card, Typography } from '@mui/material';
+import CameraAltIcon from '@mui/icons-material/CameraAlt';
+import Stack from '@mui/material/Stack';
+import axios from "axios";
+const Input = styled('input')({
+  display: 'none',
+});
 
-import React, { useState } from 'react';
-import { makeStyles } from '@mui/styles';
-// import TextField from '@material-ui/core/TextField';
-// import Button from '@material-ui/core/Button';
 
-const useStyles = makeStyles(theme => ({
-  root: {
-    display: 'flex',
-    flexDirection: 'column',
-    justifyContent: 'center',
-    alignItems: 'center',
-    // padding: theme.spacing(2)
-  },
-}));
+function Uploads() {
 
-const Uploading = () => {
-  const classes = useStyles();
-  // create state variables for each input
-  const [firstName, setFirstName] = useState('');
-  const [lastName, setLastName] = useState('');
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-  // const [open, setOpen] = useState(true)
+const [firstName, setFirstName] = useState('');
+  const [git, setGit] = useState('');
+  const [desc, setDesc] = useState('');
+  const [selectedImage, setSelectedImage] = useState(null);
+  const [imageUrl, setImageUrl] = useState(null);
+  const [base, setBase] = useState(null)
+  useEffect(() => {
+    if (selectedImage) {
+      setImageUrl(URL.createObjectURL(selectedImage));
+    }
+  }, [selectedImage]);
+
+  const handleReader = readerEvt => {
+    let binaryString = readerEvt.target.result
+    setBase(btoa(binaryString))
+  }
+
+  const handleDemo =e=>{
+    setSelectedImage(e.target.files[0])
+    
+
+  }
+
   const handleSubmit = e => {
     e.preventDefault();
-    console.log(firstName, lastName, email, password);
     
-  };
+    if(selectedImage){
+      const reader = new FileReader();
+      reader.onload   = handleReader.bind(this);
+      reader.readAsBinaryString(selectedImage)
+    }
+console.log(firstName, git, desc, selectedImage, base);
 
-  return (
-    <form className={classes.root} onSubmit={handleSubmit}>
+    let payload= {image: base}
+    const data = {
+      name: firstName,
+      git_repo: git,
+      description:desc,
+      // img:JSON.stringify(payload)
+      
+      img:JSON.stringify(payload)
+    }
+    axios.post('http://localhost:3001/posts',data).then(res=>console.log(res)).catch(err=>console.log(err))
+  };
+    return (
+    
+      <Card style={{padding:"2rem"}}>  
+    <form  onSubmit={handleSubmit}> 
+     
+    <Box className='forms' >
       <TextField
-        label="First Name"
+        label="Full Name"
         variant="filled"
         required
+        className='texts'
         value={firstName}
         onChange={e => setFirstName(e.target.value)}
       />
+
       <TextField
-        label="Last Name"
+        label="Git Repo"
         variant="filled"
         required
-        value={lastName}
-        onChange={e => setLastName(e.target.value)}
+        className='texts'
+        value={git}
+        onChange={e => setGit(e.target.value)}
       />
+
       <TextField
-        label="Email"
+        label="Description"
         variant="filled"
         type="email"
-        required
-        value={email}
-        onChange={e => setEmail(e.target.value)}
+        minRows={3} multiline={true}
+        className='texts'
+        value={desc}
+        onChange={e => setDesc(e.target.value)}
       />
-      <TextField
-        label="Password"
-        variant="filled"
-        type="password"
-        required
-        value={password}
-        onChange={e => setPassword(e.target.value)}
-      />
-      <div>
-        {/* <Button variant="contained" onClick={setOpen(false)}>
-          Cancel
-        </Button> */}
-        <Button type="submit" variant="contained" color="primary">
+    <Stack direction="row" alignItems="center" spacing={2}>
+      <Typography>Select demo image or video:</Typography>
+      <label htmlFor="icon-button-file">
+        <Input accept="image/*, video/*" onChange={handleDemo} id="icon-button-file" type="file" />
+        <IconButton color="primary" aria-label="upload picture" component="span">
+          <CameraAltIcon />
+        </IconButton>
+      </label>
+    </Stack>
+    {imageUrl && selectedImage && (
+      <Box mt={2} textAlign="left">
+        <Typography>Preview:</Typography>
+        <img src={imageUrl} alt={selectedImage.name} height="100px" />
+      </Box>
+    )}
+          
+      <div  >
+      <Button style={{textAlign:'right'}} type="submit"  variant="contained" color="primary">
           Signup
         </Button>
       </div>
-    </form>
-  );
-};
+      </Box>
+      
+      </form>
+      </Card>
+    )
+}
 
-export default Uploading;
+export default Uploads

@@ -21,49 +21,54 @@ const [firstName, setFirstName] = useState('');
   const [desc, setDesc] = useState('');
   const [selectedImage, setSelectedImage] = useState(null);
   const [imageUrl, setImageUrl] = useState(null);
-  const [base, setBase] = useState(null)
+  const [filename, setFilename] = useState("")
   useEffect(() => {
     if (selectedImage) {
       setImageUrl(URL.createObjectURL(selectedImage));
+      console.log(imageUrl)
     }
   }, [selectedImage]);
 
-  const handleReader = readerEvt => {
-    let binaryString = readerEvt.target.result
-    setBase(btoa(binaryString))
-  }
+  // const handleReader = readerEvt => {
+  //   let binaryString = readerEvt.target.result
+  //   setBase(btoa(binaryString))
+  // }
 
   const handleDemo =e=>{
     setSelectedImage(e.target.files[0])
-    
+    setFilename(e.target.files[0].name)
 
   }
 
   const handleSubmit = e => {
     e.preventDefault();
-    
-    if(selectedImage){
-      const reader = new FileReader();
-      reader.onload   = handleReader.bind(this);
-      reader.readAsBinaryString(selectedImage)
-    }
-console.log(firstName, git, desc, selectedImage, base);
+    const formData = new FormData();
+    formData.append("name",firstName)
+    formData.append("git_repo",git)
+    formData.append("description",desc)
 
-    let payload= {image: base}
-    const data = {
-      name: firstName,
-      git_repo: git,
-      description:desc,
-      // img:JSON.stringify(payload)
-      
-      img:JSON.stringify(payload)
-    }
-    axios.post('http://localhost:3001/posts',data).then(res=>console.log(res)).catch(err=>console.log(err))
+    formData.append("img", selectedImage);
+    formData.append("fileName", filename);
+    console.log(selectedImage)
+    // for(let [name, value] of formData) {
+    //   alert(`${name} = ${value}`); // key1 = value1, then key2 = value2
+    // }
+    // let payload= {image: base}
+    // const data = {
+    //   name: firstName,
+    //   git_repo: git,
+    //   description:desc,
+    //   // img:JSON.stringify(payload)
+    //   img: formData
+    //   // img:JSON.stringify(payload)
+    // }
+    // console.log(data.img)
+    axios.post('http://localhost:3001/posts',formData).then(res=>console.log(res)).catch(err=>console.log(err))
   };
     return (
     
       <Card style={{padding:"2rem"}}>  
-    <form  onSubmit={handleSubmit}> 
+    <form  onSubmit={handleSubmit} encType='multipart/form-data' > 
      
     <Box className='forms' >
       <TextField
@@ -96,7 +101,7 @@ console.log(firstName, git, desc, selectedImage, base);
     <Stack direction="row" alignItems="center" spacing={2}>
       <Typography>Select demo image or video:</Typography>
       <label htmlFor="icon-button-file">
-        <Input accept="image/*, video/*" onChange={handleDemo} id="icon-button-file" type="file" />
+        <Input accept="image/*, video/*" name="imgs" onChange={handleDemo} id="icon-button-file" type="file"  />
         <IconButton color="primary" aria-label="upload picture" component="span">
           <CameraAltIcon />
         </IconButton>
