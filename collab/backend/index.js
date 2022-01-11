@@ -17,7 +17,7 @@ app.use(cors())
 app.use(express.json())
 
 // default option
-app.use(fileUpload())
+// app.use(fileUpload())
 
 // to access  data from client
 app.use(express.urlencoded({
@@ -38,44 +38,24 @@ try {
 }
 
 
-const storage = multer.diskStorage({
-    destination: 'D:/firstreact/collab/frontend/src/components/uploads/',
-    filename: function (req, files, cb) {   
-        // null as first argument means no error
-        cb(null, Date.now() + '-' + files.originalname )  
-    }
+var storage = multer.diskStorage({
+  destination: './public/uploads/',  
+  filename: function (req, file, cb) {
+    cb(null, file.fieldname + '-' + Date.now() + path.extname(file.originalname));
+  }
 })
+
+var upload = multer({storage: storage});
+
  
 
-
-// app.use(express.static(__dirname + '/public'));
-// app.use('/uploads', express.static('uploads'));
+app.use(express.static('./public'));
  
-app.post('/posts', async (req,res)=>{
-    let upload = multer({ storage: storage}).single('imgs');
+app.post('/posts', upload.single('myImg'), async (req, res) => {               
     const name=req.body.name
     const git_repo=req.body.git_repo
-    const description=req.body.description
-    const det=req.files
-    console.log(det.path)
-    // const tempPath=req.files.path
-    upload(req, res, function(err) {
-         
-        if (!req.files) {
-            return res.send('Please select an image to upload');
-        }
-        else if (err instanceof multer.MulterError) {
-            return res.send(err);
-        }
-        else if (err) {
-            return res.send(err);
-        }
-
-    
-
-    // console.log(name)
-    const location=`D:/firstreact/collab/frontend/src/components/${det.filename}`
-    // console.log(location)
+    const description=req.body.description        
+    const location = `/public/uploads/${req.file.filename}`;
 
     
     const sql = `INSERT INTO postinput (name,git_repo,description,img) VALUES ('${name}', '${git_repo}', '${description}','${location}')`;
@@ -86,10 +66,10 @@ app.post('/posts', async (req,res)=>{
             res.status(400).send(err)
         }
         else res.json(result)
-    });
+
+    });        
 
 
-});
 });
 
 app.get('/posts',async  (req,res)=>{
