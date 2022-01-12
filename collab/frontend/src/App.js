@@ -1,9 +1,10 @@
-import  { useState } from 'react';
+import  { useEffect, useState } from 'react';
 import './App.css';
 // import Uploading from './components/Uploading';
 import CloseIcon from '@mui/icons-material/Close';
-import { Button } from '@mui/material';
+import { appBarClasses, Button } from '@mui/material';
 import Uploads from './components/Uploads';
+import axios from "axios";
 // import Approval from './components/Approval';
 // import Details from './components/Details';
 // import Profile from './components/Profile';
@@ -11,18 +12,30 @@ import Uploads from './components/Uploads';
 // import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
 
 function App() {
+  const [src, setSrc] = useState('')
+  useEffect(() => {
+    
+    axios.get('http://localhost:3001/posts').then(res=>{
+      console.log("In axios")
+      setSrc("http://localhost:3001/"+res.data[0].img)
+    })
+  }, [])
   const [open, setOpen] = useState(true)
   return (
     <div className="App">
       <Button className='close' style={{position:'absolute', margin: "2rem",color:"white", right:'0'}} className='close' onClick={()=>{setOpen(false)}}><CloseIcon/></Button>
       <header className="App-header">
       {open && <Uploads/>}
+
+      <img src={src} style={{width:'80%'}}></img>
       {/* <Approval/> */}
       {/* <Details/>
       <Profile/> */}
       </header>
 
-
+      <h1>
+        
+      </h1>
 
       {/* <Router>
       <Routes>

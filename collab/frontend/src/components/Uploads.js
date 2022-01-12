@@ -47,7 +47,7 @@ const [firstName, setFirstName] = useState('');
     formData.append("git_repo",git)
     formData.append("description",desc)
 
-    formData.append("img", selectedImage);
+    formData.append("imgs", selectedImage);
     formData.append("fileName", filename);
     console.log(selectedImage)
     // for(let [name, value] of formData) {
