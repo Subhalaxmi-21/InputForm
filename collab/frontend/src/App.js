@@ -16,8 +16,9 @@ function App() {
   useEffect(() => {
     
     axios.get('http://localhost:3001/posts').then(res=>{
-      console.log("In axios")
-      setSrc("http://localhost:3001/"+res.data[0].img)
+      console.log("In axios",res.data[0].img)
+      setSrc('http://localhost:3001/'+res.data[0].img)
+      console.log(src)
     })
   }, [])
   const [open, setOpen] = useState(true)

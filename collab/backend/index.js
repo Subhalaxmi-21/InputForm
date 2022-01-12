@@ -24,7 +24,7 @@ app.use(express.urlencoded({
     extended: true
 }))
 
-app.use('/', express.static(path.join(__dirname, '/')));
+// app.use('/', express.static( '/'));
 
 // app.use(express.static("./public"));
 app.use(bodyparser.json())
@@ -50,6 +50,8 @@ const storage = multer.diskStorage({
 var upload = multer({ storage: storage})
 
 // app.use(express.static(__dirname + '/public'));
+
+app.use('/', express.static(__dirname + '/'));
 // app.use('/uploads', express.static('uploads'));
  
 app.post('/posts', upload.single('imgs'), async (req,res)=>{
@@ -84,8 +86,8 @@ app.get('/posts',async  (req,res)=>{
         }
         else{
             console.log(result)
-            res.json(result)
-            
+            res.status(200).send(result)
+            // console.log(result)
         }
     })
 })

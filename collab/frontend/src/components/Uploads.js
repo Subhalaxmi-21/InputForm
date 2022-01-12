@@ -25,7 +25,7 @@ const [firstName, setFirstName] = useState('');
   useEffect(() => {
     if (selectedImage) {
       setImageUrl(URL.createObjectURL(selectedImage));
-      console.log(imageUrl)
+      console.log(imageUrl)      
     }
   }, [selectedImage]);
 
@@ -50,25 +50,13 @@ const [firstName, setFirstName] = useState('');
     formData.append("imgs", selectedImage);
     formData.append("fileName", filename);
     console.log(selectedImage)
-    // for(let [name, value] of formData) {
-    //   alert(`${name} = ${value}`); // key1 = value1, then key2 = value2
-    // }
-    // let payload= {image: base}
-    // const data = {
-    //   name: firstName,
-    //   git_repo: git,
-    //   description:desc,
-    //   // img:JSON.stringify(payload)
-    //   img: formData
-    //   // img:JSON.stringify(payload)
-    // }
-    // console.log(data.img)
+  
     axios.post('http://localhost:3001/posts',formData).then(res=>console.log(res)).catch(err=>console.log(err))
   };
     return (
     
       <Card style={{padding:"2rem"}}>  
-    <form  onSubmit={handleSubmit} encType='multipart/form-data' > 
+    <form  onSubmit={handleSubmit} enctype='multipart/form-data' > 
      
     <Box className='forms' >
       <TextField
@@ -101,7 +89,7 @@ const [firstName, setFirstName] = useState('');
     <Stack direction="row" alignItems="center" spacing={2}>
       <Typography>Select demo image or video:</Typography>
       <label htmlFor="icon-button-file">
-        <Input accept="image/*, video/*" name="imgs" onChange={handleDemo} id="icon-button-file" type="file"  />
+        <Input accept="image/*, video/*" name="myImg" onChange={handleDemo} id="icon-button-file" type="file"  />
         <IconButton color="primary" aria-label="upload picture" component="span">
           <CameraAltIcon />
         </IconButton>
