@@ -5,6 +5,9 @@ import CloseIcon from '@mui/icons-material/Close';
 import { appBarClasses, Button } from '@mui/material';
 import Uploads from './components/Uploads';
 import axios from "axios";
+import Register from './components/Register';
+import Registration from './components/Registration';
+import Login from './components/Login';
 // import Approval from './components/Approval';
 // import Details from './components/Details';
 // import Profile from './components/Profile';
@@ -13,22 +16,24 @@ import axios from "axios";
 
 function App() {
   const [src, setSrc] = useState('')
-  useEffect(() => {
+  // useEffect(() => {
     
-    axios.get('http://localhost:3001/posts').then(res=>{
-      console.log("In axios",res.data[0].img)
-      setSrc('http://localhost:3001/'+res.data[0].img)
-      console.log(src)
-    })
-  }, [])
+  //   axios.get('http://localhost:3001/posts').then(res=>{
+  //     console.log("In axios",res.data[0].img)
+  //     setSrc('http://localhost:3001/'+res.data[0].img)
+  //     console.log(src)
+  //   })
+  // }, [])
   const [open, setOpen] = useState(true)
   return (
     <div className="App">
       <Button className='close' style={{position:'absolute', margin: "2rem",color:"white", right:'0'}} className='close' onClick={()=>{setOpen(false)}}><CloseIcon/></Button>
       <header className="App-header">
-      {open && <Uploads/>}
-
-      <img src={src} style={{width:'80%'}}></img>
+      {/* {open && <Uploads/>} */}
+      <Registration/>
+      <Login/>
+      {/* <img src={src} style={{width:'80%'}}></img> */}
+      {/* <Register/> */}
       {/* <Approval/> */}
       {/* <Details/>
       <Profile/> */}

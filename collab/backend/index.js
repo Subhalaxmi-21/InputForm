@@ -1,7 +1,11 @@
 var express = require('express');
 const multer=require('multer')
 const fs = require("fs")
+
 const bodyparser=require('body-parser')
+const cookieParser=require('cookie-parser')
+const session=require('express-session')
+
 var app = express();
 var cors = require('cors');
 const path=require('path')
@@ -10,11 +14,21 @@ var database= require('./models/db')
 const fileUpload = require('express-fileupload')
 var port =process.env.port || 3001;
 
-// cross-origin sharing
-app.use(cors())
-
 // api parsing json
 app.use(express.json())
+
+// cross-origin sharing
+app.use(cors({
+    origin:["http://localhost:3000"],
+    methods:["GET",'POST'],
+    credentials:true
+}))
+
+app.use(cookieParser())
+
+// app.use
+
+
 
 // default option
 // app.use(fileUpload())
@@ -30,6 +44,16 @@ app.use(express.urlencoded({
 app.use(bodyparser.json())
 app.use(bodyparser.urlencoded({
     extended: true
+}))
+
+app.use(session({
+    key:"userId",
+    secret: "idk",
+    resave:false,
+    saveUninitialized:false,
+    cookie:{
+        expires: 60*60*24
+    }
 }))
 
 try {
@@ -61,7 +85,7 @@ app.post('/posts', upload.single('imgs'), async (req,res)=>{
     const description=req.body.description
 
     const location=`/public/uploads/${req.file.filename}`
-    console.log(location)
+    // console.log(location)
 
     
     const sql = `INSERT INTO postinput (name,git_repo,description,img) VALUES ('${name}', '${git_repo}', '${description}','${location}')`;
@@ -79,13 +103,13 @@ app.post('/posts', upload.single('imgs'), async (req,res)=>{
 });
 
 app.get('/posts',async  (req,res)=>{
-    const sql = "select img from postinput where git_repo='git2'"
+    const sql = "select img from postinput where git_repo='git5'"
     database.query(sql,(err,result)=>{
         if(err){
             res.status(400).send(err)
         }
         else{
-            console.log(result)
+            // console.log(result)
             res.status(200).send(result)
             // console.log(result)
         }
@@ -234,5 +258,79 @@ app.post('/collab_request',(req,res) =>{
         if (err) console.log(err);
     });
 })
+
+
+
+// Lgoin and register part--------------------------------
+const bcrypt = require("bcrypt");
+const saltRounds = 10;                                                                                                                                      app.post('/insert', (req, res) =>{
+     
+    const name = req.body.name;
+    const email  = req.body.email;
+    const branch = req.body.branch;
+    const year = req.body.year;
+    const collegeId= req.body.collegeId ;
+    const phone = req.body.phone;
+    const interests = req.body.interests;
+    const city = req.body.city;
+    const password = req.body.password;
+    bcrypt.hash(password, saltRounds, (err, hash) => {
+        if (err) {
+          console.log(err);
+        }
+    
+    const sqlinsert =
+    "INSERT INTO login ( name, linkedin, year, branch, email, phone, city, interests, password) VALUES (?,?,?,?,?,?,?,?,?)";
+    
+    database.query(sqlinsert, [name,collegeId,year,branch,email,phone,city,interests,hash], (err, result)=>{
+        if (err) {
+            console.log(err);
+        }
+    })});
+  
+
+});
+
+app.get("/login", (req,res)=>{
+    if(req.session.user){
+        res.send({loggedIn:true, user:req.session.user})
+    }else{
+        res.send({loggedIn:false})
+    }
+})
+
+app.post("/login", (req, res) => {
+    const email = req.body.email;
+    const password = req.body.password;
+  
+    database.query(
+      "SELECT * FROM login WHERE email = ?;",
+      email,
+      (err, result) => {
+        if (err) {
+          res.send({ err: err });
+        }
+  
+        if (result.length > 0) {
+         console.log(result[0].password)
+          bcrypt.compare(password, result[0].password, (error, response) => {
+            if (response) {
+              req.session.user = result;
+              console.log(req.session.user);
+              console.log('success');
+              res.send(result);
+            } else {
+                console.log(response)
+              res.send({ message: "Wrong username/password combination!" });
+            }
+          });
+        } else {
+          res.send({ message: "User doesn't exist" });
+        }
+      }
+    );
+  });
+
+// End of login and register
 
 app.listen(port, ()=> console.log("Listening at port ",port))
