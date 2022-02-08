@@ -19,6 +19,10 @@ function Login() {
 
   axios.defaults.withCredentials = true;
 
+  const logout = () => {
+    axios.post("http://localhost:3001/logout").then(alert('Sucess logged out!'))
+  }
+
   const login = () => {
     axios.post("http://localhost:3001/login", {
         email: email,
@@ -106,8 +110,8 @@ useEffect(() => {
               
               {/* <Button outline color="primary" style={{marginTop:'25px'}} type="submit" onClick={() => login()}>Login</Button>  */}
               <Button outline color="primary" style={{marginTop:'25px'}} type="submit" onClick={()=>login()}>Login</Button> 
-            
-
+              <Button outline color="primary" style={{marginTop:'25px'}} type="submit" onClick={()=>logout()}>LogOUT</Button> 
+              
               <div style={{marginTop:'50px'}}></div>
 
               

@@ -93,6 +93,15 @@ console.log(firstName, git, desc, selectedImage, base);
         value={desc}
         onChange={e => setDesc(e.target.value)}
       />
+      <Button onClick={<TextField
+        label="Description"
+        variant="filled"
+        type="email"
+        minRows={3} multiline={true}
+        className='texts'
+        value={desc}
+        onChange={e => setDesc(...desc+e.target.value)}
+      />}>Add</Button>
     <Stack direction="row" alignItems="center" spacing={2}>
       <Typography>Select demo image or video:</Typography>
       <label htmlFor="icon-button-file">

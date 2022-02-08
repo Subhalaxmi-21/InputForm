@@ -331,6 +331,13 @@ app.post("/login", (req, res) => {
     );
   });
 
+app.post('/logout',(req,res)=>{
+    req.session.destroy((err)=>{
+        if(err) throw err;
+        console.log("Deleted");
+    })
+})
+
 // End of login and register
 
 app.listen(port, ()=> console.log("Listening at port ",port))
